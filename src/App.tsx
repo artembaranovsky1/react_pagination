@@ -3,6 +3,7 @@ import './App.css';
 import { getNumbers } from './utils';
 import { Pagination } from './components/Pagination';
 
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const items = getNumbers(1, 42).map(n => `Item ${n}`);
 
@@ -12,7 +13,7 @@ export const App: React.FC = () => {
 
   const total: number = items.length;
   const first = (currentPage - 1) * perPage + 1;
-  const last = Math.min(currentPage * perPage, 42);
+  const last = Math.min(currentPage * perPage, total);
   const itemsOfPage = getNumbers(first, last);
 
   return (
@@ -31,7 +32,7 @@ export const App: React.FC = () => {
             className="form-control"
             value={perPage}
             onChange={option => {
-              setPerPage(option.target.value);
+              setPerPage(Number(option.target.value));
               setCurrentPage(1);
             }}
           >
