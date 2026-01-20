@@ -84,7 +84,7 @@ export const Pagination: React.FC<Props> = ({
         <Link
           data-cy="nextLink"
           className="page-link"
-          to={'?page=${currentPage + 1}&perPage=${perPage}'}
+          to={`?page=${currentPage + 1}&perPage=${perPage}`}
           aria-disabled={currentPage === totalPages}
           onClick={e => {
             if (currentPage === totalPages) {

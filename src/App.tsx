@@ -2,19 +2,37 @@ import React from 'react';
 import './App.css';
 import { getNumbers } from './utils';
 import { Pagination } from './components/Pagination';
+import { useSearchParams } from 'react-router-dom';
 
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const items = getNumbers(1, 42).map(n => `Item ${n}`);
 
 export const App: React.FC = () => {
-  const [perPage, setPerPage] = React.useState<number>(5);
-  const [currentPage, setCurrentPage] = React.useState<number>(1);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const total: number = items.length;
+  // 👉 ЄДИНЕ джерело істини
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const perPage = Number(searchParams.get('perPage')) || 5;
+
+  const total = items.length;
+
   const first = (currentPage - 1) * perPage + 1;
   const last = Math.min(currentPage * perPage, total);
+
   const itemsOfPage = getNumbers(first, last);
+
+  const handlePageChange = (newPage: number) => {
+    setSearchParams({
+      page: String(newPage),
+      perPage: String(perPage),
+    });
+  };
+
+  const handlePerPageChange = (newPerPage: number) => {
+    setSearchParams({
+      page: '1',
+      perPage: String(newPerPage),
+    });
+  };
 
   return (
     <div className="container">
@@ -31,10 +49,7 @@ export const App: React.FC = () => {
             id="perPageSelector"
             className="form-control"
             value={perPage}
-            onChange={option => {
-              setPerPage(Number(option.target.value));
-              setCurrentPage(1);
-            }}
+            onChange={e => handlePerPageChange(Number(e.target.value))}
           >
             <option value="3">3</option>
             <option value="5">5</option>
@@ -52,17 +67,15 @@ export const App: React.FC = () => {
         total={total}
         perPage={perPage}
         currentPage={currentPage}
-        onPageChange={page => setCurrentPage(page)}
+        onPageChange={handlePageChange}
       />
 
       <ul>
-        {itemsOfPage
-          .map(n => `Item ${n}`)
-          .map(item => (
-            <li data-cy="item" key={item}>
-              {item}
-            </li>
-          ))}
+        {itemsOfPage.map(n => (
+          <li data-cy="item" key={n}>
+            Item {n}
+          </li>
+        ))}
       </ul>
     </div>
   );
